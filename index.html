@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>DS5 · Workout Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0c0e0d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DS5 Log">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+  :root{
+    --bg:#0c0e0d; --panel:#151917; --panel2:#1c211e; --line:#2a302c;
+    --ink:#f2f5f1; --mut:#838b84; --mut2:#5d645e; --go:#c4ff1f;
+    --chest:#ff6b5e; --back:#4cc4ff; --sh:#b98bff; --legs:#37d68a; --core:#ffd23f; --cardio:#2fe6c8;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;background:var(--bg);}
+  body{font-family:'Hanken Grotesk',system-ui,sans-serif;color:var(--ink);min-height:100vh;
+    background:radial-gradient(120% 55% at 50% -10%, #1a221c 0%, rgba(26,34,28,0) 55%), var(--bg);
+    -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:480px;margin:0 auto;padding:16px 14px 48px;}
+  .kicker{font-size:.6rem;letter-spacing:.34em;color:var(--mut);font-weight:800;text-transform:uppercase;}
+  .title{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.02em;line-height:1;margin-top:3px;}
+  .clock{font-size:.78rem;color:var(--go);font-weight:700;margin:6px 0 2px;font-variant-numeric:tabular-nums;}
+  .sub{font-size:.74rem;color:var(--mut);margin:2px 0 16px;line-height:1.4;}
+
+  .sech{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--mut2);font-weight:800;margin:0 2px 9px;}
+
+  /* group tiles */
+  .groups{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+  .gtile{border:1.5px solid var(--line);border-radius:13px;padding:13px 8px;cursor:pointer;text-align:center;transition:.14s;background:var(--panel);}
+  .gtile .gn{font-family:'Bebas Neue',sans-serif;font-size:1.12rem;letter-spacing:.03em;line-height:1;color:var(--ink);}
+  .gtile .gc{font-size:.58rem;color:var(--mut2);font-weight:700;margin-top:3px;letter-spacing:.04em;}
+  .gtile:active{transform:scale(.97);}
+
+  /* exercise buttons */
+  .exs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:8px;}
+  .exbtn{display:flex;align-items:center;gap:9px;border:1.5px solid var(--line);background:var(--panel);
+    border-radius:13px;padding:14px 12px;cursor:pointer;transition:.12s;min-height:58px;text-align:left;}
+  .exbtn:active{transform:scale(.97);}
+  .exbtn .ed{width:11px;height:11px;border-radius:50%;flex:none;}
+  .exbtn .et{font-size:.92rem;font-weight:700;line-height:1.1;color:var(--ink);}
+
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(22px);background:var(--go);color:#10140a;
+    font-weight:800;font-size:.85rem;padding:11px 12px 11px 18px;border-radius:13px;opacity:0;pointer-events:none;transition:.25s;
+    z-index:50;box-shadow:0 12px 32px -8px rgba(196,255,31,.5);display:flex;align-items:center;gap:14px;}
+  .toast.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+  .toast button{background:#10140a;color:var(--go);border:none;border-radius:8px;font-weight:800;font-size:.74rem;padding:6px 12px;cursor:pointer;}
+
+  .bar{display:flex;align-items:center;gap:8px;margin:24px 0 10px;}
+  .bar .lh{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--mut2);font-weight:800;}
+  .bar .stat{font-size:.68rem;color:var(--mut);margin-left:auto;font-weight:700;}
+  .exp{font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#10140a;background:var(--go);border:none;border-radius:8px;padding:6px 11px;cursor:pointer;}
+
+  .day{margin-bottom:14px;}
+  .dayhd{font-family:'Bebas Neue',sans-serif;font-size:1.18rem;letter-spacing:.04em;color:var(--go);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:baseline;}
+  .dayhd .dc{font-family:'Hanken Grotesk';font-size:.64rem;color:var(--mut2);font-weight:700;letter-spacing:.04em;}
+  .ent{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid #1c211e;}
+  .ent .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .ent .et{font-variant-numeric:tabular-nums;font-size:.78rem;color:var(--mut);font-weight:700;min-width:62px;}
+  .ent .en{font-size:.92rem;font-weight:600;flex:1;}
+  .ent .del{color:var(--mut2);font-size:.95rem;font-weight:800;cursor:pointer;padding:2px 7px;}
+  .ent .del:active{color:var(--chest);}
+  .empty{color:var(--mut2);font-size:.82rem;text-align:center;padding:20px;border:1px dashed var(--line);border-radius:12px;}
+
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:18px;z-index:60;}
+  .modal.show{display:flex;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;max-width:440px;width:100%;}
+  .card h3{margin:0 0 4px;font-family:'Bebas Neue',sans-serif;font-size:1.45rem;letter-spacing:.04em;}
+  .card p{margin:0 0 10px;font-size:.74rem;color:var(--mut);line-height:1.4;}
+  .card textarea{width:100%;height:180px;background:#0e120d;border:1px solid var(--line);border-radius:10px;color:var(--ink);
+    font-family:ui-monospace,monospace;font-size:.72rem;padding:10px;resize:vertical;user-select:all;-webkit-user-select:all;}
+  .card .row{display:flex;gap:8px;margin-top:10px;}
+  .card button{flex:1;border:none;border-radius:10px;padding:10px;font-weight:800;font-size:.8rem;cursor:pointer;}
+  .b-close{background:var(--panel2);color:var(--ink);}
+  .b-fmt{background:none;border:1px solid var(--line)!important;color:var(--mut);}
+  .b-fmt.on{color:var(--go);border-color:var(--go)!important;}
+</style>
+
+<div class="wrap">
+  <div class="kicker">DS5 · Digression Log</div>
+  <div class="title">What did you do?</div>
+  <div class="clock" id="clock"></div>
+  <div class="sub">Pick a muscle group, then tap each exercise you actually did. Every tap is stamped with the day &amp; time — undo is right there if you mis-tap.</div>
+
+  <div class="sech">1 · Muscle group</div>
+  <div class="groups" id="groups"></div>
+
+  <div class="sech" id="exsHead">2 · Tap what you did</div>
+  <div class="exs" id="exs"></div>
+
+  <div class="bar">
+    <span class="lh">History</span>
+    <span class="stat" id="stat"></span>
+    <button class="exp" id="expBtn">Export</button>
+  </div>
+  <div id="history"></div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="undoBtn">Undo</button></div>
+
+<div class="modal" id="modal">
+  <div class="card">
+    <h3>Export log</h3>
+    <p>Long-press the text, Select All, copy — then paste it back to Claude for pattern analysis.</p>
+    <div class="row" style="margin:0 0 8px">
+      <button class="b-fmt on" id="fmtCsv">CSV</button>
+      <button class="b-fmt" id="fmtJson">JSON</button>
+    </div>
+    <textarea id="expText" readonly></textarea>
+    <div class="row"><button class="b-close" id="closeBtn">Close</button></div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+const GROUPS=[
+  {name:"Chest+Tri",hex:"#ff6b5e",ex:["Machine Chest Press","Cable Crossover","Incline DB Press","Tricep Pushdown","Overhead Cable Ext"]},
+  {name:"Back+Bi",hex:"#4cc4ff",ex:["Lat Pulldown","Chest-Supported Row","Close-Grip Pulldown","Hammer Curl","Dumbbell Curl"]},
+  {name:"Shoulders",hex:"#b98bff",ex:["Machine Shoulder Press","Lateral Raises","Reverse Pec Dec","Front Raises"]},
+  {name:"Legs",hex:"#37d68a",ex:["Leg Extension","Leg Curl","Half Squat","Calf Raises","Adductors","Abductors"]},
+  {name:"Core",hex:"#ffd23f",ex:["Plank","Bird Dog","Dead Bug","Pallof Press","Med-Ball Circuit"]},
+  {name:"Cardio",hex:"#2fe6c8",ex:["Skill Mill","Air Bike","Elliptical","Spinning","Walk / Jog","Swim"]},
+];
+function groupHex(g){const x=GROUPS.find(z=>z.name===g);return x?x.hex:"#888";}
+
+let curGroup=0, log=[], memFallback={};
+
+// SIMPLIFIED STORAGE - works everywhere (no external dependencies)
+async function sGet(k){
+  try{const v=localStorage.getItem(k);if(v!==null)return v;}catch(e){}
+  return (k in memFallback)?memFallback[k]:null;
+}
+async function sSet(k,v){
+  memFallback[k]=v;
+  try{localStorage.setItem(k,v);}catch(e){}
+}
+const KEY="ds5log:entries";
+async function loadLog(){const raw=await sGet(KEY);log=raw?JSON.parse(raw):[];}
+async function saveLog(){await sSet(KEY,JSON.stringify(log));}
+
+function renderGroups(){
+  $("groups").innerHTML=GROUPS.map((g,i)=>{
+    const on=i===curGroup;
+    const style=on?`background:${g.hex};border-color:${g.hex}`:`border-color:${g.hex}66`;
+    const ncol=on?"#10140a":"var(--ink)";
+    const ccol=on?"#10140a":"var(--mut2)";
+    return `<div class="gtile" data-g="${i}" style="${style}"><div class="gn" style="color:${ncol}">${g.name}</div><div class="gc" style="color:${ccol}">${g.ex.length} moves</div></div>`;
+  }).join("");
+  $("groups").querySelectorAll("[data-g]").forEach(el=>el.onclick=()=>{curGroup=+el.dataset.g;renderGroups();renderExs();});
+}
+function renderExs(){
+  const g=GROUPS[curGroup];
+  $("exsHead").textContent="2 · Tap what you did — "+g.name;
+  $("exs").innerHTML=g.ex.map(e=>`<button class="exbtn" data-ex="${e}" style="border-color:${g.hex}66"><span class="ed" style="background:${g.hex}"></span><span class="et">${e}</span></button>`).join("");
+  $("exs").querySelectorAll("[data-ex]").forEach(el=>el.onclick=()=>doLog(el.dataset.ex,g.name));
+}
+
+let lastTs=null;
+async function doLog(ex,group){
+  const now=new Date(); const ts=now.toISOString();
+  log.push({ex,group,ts}); lastTs=ts;
+  await saveLog(); renderHistory();
+  $("toastMsg").textContent="Logged: "+ex;
+  const t=$("toast"); t.classList.add("show");
+  clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove("show"),2600);
+}
+async function undoLast(){ if(lastTs){await del(lastTs);lastTs=null;$("toast").classList.remove("show");} }
+async function del(ts){ log=log.filter(e=>e.ts!==ts); await saveLog(); renderHistory(); }
+
+function renderHistory(){
+  $("stat").textContent = log.length ? (log.length+" logs · "+new Set(log.map(e=>e.ts.slice(0,10))).size+" days") : "";
+  if(!log.length){$("history").innerHTML='<div class="empty">No entries yet. Pick a group above and tap what you did.</div>';return;}
+  const byDay={};
+  log.forEach(e=>{const d=e.ts.slice(0,10);(byDay[d]=byDay[d]||[]).push(e);});
+  const days=Object.keys(byDay).sort().reverse();
+  let h="";
+  days.forEach(d=>{
+    const dd=new Date(d+"T00:00:00");
+    const lbl=dd.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"short"});
+    const items=byDay[d].slice().sort((a,b)=>b.ts.localeCompare(a.ts));
+    h+=`<div class="day"><div class="dayhd">${lbl}<span class="dc">${items.length} logged</span></div>`;
+    items.forEach(e=>{
+      const tm=new Date(e.ts).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
+      h+=`<div class="ent"><span class="dot" style="background:${groupHex(e.group)}"></span><span class="et">${tm}</span><span class="en">${e.ex}</span><span class="del" data-ts="${e.ts}">✕</span></div>`;
+    });
+    h+=`</div>`;
+  });
+  $("history").innerHTML=h;
+  $("history").querySelectorAll(".del").forEach(el=>el.onclick=()=>del(el.dataset.ts));
+}
+
+/* export */
+let expFmt="csv";
+function buildExport(){
+  if(expFmt==="json")return JSON.stringify(log,null,2);
+  let s="Date,Time,Exercise,Group\n";
+  log.slice().sort((a,b)=>a.ts.localeCompare(b.ts)).forEach(e=>{
+    const d=new Date(e.ts);
+    s+=`${e.ts.slice(0,10)},${d.toLocaleTimeString(undefined,{hour12:false})},"${e.ex}",${e.group}\n`;
+  });
+  return s;
+}
+
+function tick(){
+  const d=new Date();
+  $("clock").textContent="Stamps as  "+d.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"})+"  ·  "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
+}
+
+(async function(){
+  renderGroups(); renderExs(); tick(); setInterval(tick,1000);
+  $("undoBtn").onclick=undoLast;
+  $("expBtn").onclick=()=>{$("expText").value=buildExport();$("modal").classList.add("show");};
+  $("closeBtn").onclick=()=>$("modal").classList.remove("show");
+  $("fmtCsv").onclick=()=>{expFmt="csv";$("fmtCsv").classList.add("on");$("fmtJson").classList.remove("on");$("expText").value=buildExport();};
+  $("fmtJson").onclick=()=>{expFmt="json";$("fmtJson").classList.add("on");$("fmtCsv").classList.remove("on");$("expText").value=buildExport();};
+  await loadLog(); renderHistory();
+})();
+</script>
+</body>
+</html>
