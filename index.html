@@ -2,18 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>DS5 · Workout Log</title>
+<meta name="description" content="Quickly log exercises, review workout history, and export your training data.">
+<meta name="application-name" content="DS5 Workout Log">
+<meta name="color-scheme" content="dark">
+<meta name="format-detection" content="telephone=no">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0c0e0d">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DS5 Log">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="192x192" href="./icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 <style>
   :root{
     --bg:#0c0e0d; --panel:#151917; --panel2:#1c211e; --line:#2a302c;
@@ -25,8 +30,8 @@
   html,body{margin:0;background:var(--bg);}
   body{font-family:'Hanken Grotesk',system-ui,sans-serif;color:var(--ink);min-height:100vh;
     background:radial-gradient(120% 55% at 50% -10%, #1a221c 0%, rgba(26,34,28,0) 55%), var(--bg);
-    -webkit-font-smoothing:antialiased;}
-  .wrap{max-width:480px;margin:0 auto;padding:16px 14px 48px;}
+    -webkit-font-smoothing:antialiased;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}
+  .wrap{max-width:480px;margin:0 auto;padding:16px max(14px,env(safe-area-inset-right)) 48px max(14px,env(safe-area-inset-left));}
   .kicker{font-size:.6rem;letter-spacing:.34em;color:var(--mut);font-weight:800;text-transform:uppercase;}
   .title{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.02em;line-height:1;margin-top:3px;}
   .clock{font-size:.78rem;color:var(--go);font-weight:700;margin:6px 0 2px;font-variant-numeric:tabular-nums;}
@@ -40,6 +45,8 @@
   .gtile .gn{font-family:'Bebas Neue',sans-serif;font-size:1.12rem;letter-spacing:.03em;line-height:1;color:var(--ink);}
   .gtile .gc{font-size:.58rem;color:var(--mut2);font-weight:700;margin-top:3px;letter-spacing:.04em;}
   .gtile:active{transform:scale(.97);}
+  button{font:inherit;}
+  button:focus-visible,.gtile:focus-visible{outline:3px solid var(--go);outline-offset:3px;}
 
   /* exercise buttons */
   .exs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:8px;}
@@ -85,6 +92,8 @@
   .b-fmt.on{color:var(--go);border-color:var(--go)!important;}
 </style>
 
+<body>
+<noscript><div class="wrap">DS5 Workout Log needs JavaScript enabled to save your workout entries.</div></noscript>
 <div class="wrap">
   <div class="kicker">DS5 · Digression Log</div>
   <div class="title">What did you do?</div>
@@ -154,7 +163,7 @@ function renderGroups(){
     const style=on?`background:${g.hex};border-color:${g.hex}`:`border-color:${g.hex}66`;
     const ncol=on?"#10140a":"var(--ink)";
     const ccol=on?"#10140a":"var(--mut2)";
-    return `<div class="gtile" data-g="${i}" style="${style}"><div class="gn" style="color:${ncol}">${g.name}</div><div class="gc" style="color:${ccol}">${g.ex.length} moves</div></div>`;
+    return `<button class="gtile" type="button" data-g="${i}" aria-pressed="${on}" style="${style}"><span class="gn" style="color:${ncol}">${g.name}</span><span class="gc" style="color:${ccol};display:block">${g.ex.length} moves</span></button>`;
   }).join("");
   $("groups").querySelectorAll("[data-g]").forEach(el=>el.onclick=()=>{curGroup=+el.dataset.g;renderGroups();renderExs();});
 }
@@ -225,6 +234,13 @@ function tick(){
   $("fmtJson").onclick=()=>{expFmt="json";$("fmtJson").classList.add("on");$("fmtCsv").classList.remove("on");$("expText").value=buildExport();};
   await loadLog(); renderHistory();
 })();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js", {scope:"./"})
+      .catch((error) => console.error("Service worker registration failed:", error));
+  });
+}
 </script>
 </body>
 </html>
