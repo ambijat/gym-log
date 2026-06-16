@@ -38,6 +38,12 @@
   .sub{font-size:.74rem;color:var(--mut);margin:2px 0 16px;line-height:1.4;}
 
   .sech{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--mut2);font-weight:800;margin:0 2px 9px;}
+  .summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:0 0 18px;}
+  .sumcard{min-height:64px;background:linear-gradient(180deg,#171c15,var(--panel));border:1px solid var(--line);border-radius:12px;padding:10px 11px;}
+  .sumcard .sk{font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);font-weight:800;white-space:nowrap;}
+  .sumcard .sv{font-family:'Bebas Neue',sans-serif;font-size:1.45rem;line-height:1;color:var(--ink);margin-top:6px;font-variant-numeric:tabular-nums;}
+  .sumcard.hot{border-color:rgba(196,255,31,.5);box-shadow:0 12px 30px -26px rgba(196,255,31,.8);}
+  .sumcard.hot .sv{color:var(--go);}
 
   /* group tiles */
   .groups{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
@@ -66,6 +72,10 @@
   .bar .lh{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--mut2);font-weight:800;}
   .bar .stat{font-size:.68rem;color:var(--mut);margin-left:auto;font-weight:700;}
   .exp{font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#10140a;background:var(--go);border:none;border-radius:8px;padding:6px 11px;cursor:pointer;}
+  .filters{display:flex;gap:7px;margin:0 0 12px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+  .filters::-webkit-scrollbar{display:none;}
+  .fbtn{flex:0 0 auto;background:var(--panel);border:1px solid var(--line);color:var(--mut);border-radius:999px;font-size:.68rem;font-weight:800;padding:7px 10px;cursor:pointer;}
+  .fbtn.on{background:var(--go);border-color:var(--go);color:#10140a;}
 
   .day{margin-bottom:14px;}
   .dayhd{font-family:'Bebas Neue',sans-serif;font-size:1.18rem;letter-spacing:.04em;color:var(--go);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:baseline;}
@@ -74,7 +84,8 @@
   .ent .dot{width:9px;height:9px;border-radius:50%;flex:none;}
   .ent .et{font-variant-numeric:tabular-nums;font-size:.78rem;color:var(--mut);font-weight:700;min-width:62px;}
   .ent .en{font-size:.92rem;font-weight:600;flex:1;}
-  .ent .del{color:var(--mut2);font-size:.95rem;font-weight:800;cursor:pointer;padding:2px 7px;}
+  .ent .del{appearance:none;background:none;border:0;color:var(--mut2);font-size:.95rem;font-weight:800;cursor:pointer;padding:5px 8px;border-radius:8px;}
+  .ent .del:focus-visible{outline:2px solid var(--go);outline-offset:2px;}
   .ent .del:active{color:var(--chest);}
   .empty{color:var(--mut2);font-size:.82rem;text-align:center;padding:20px;border:1px dashed var(--line);border-radius:12px;}
 
@@ -87,9 +98,16 @@
     font-family:ui-monospace,monospace;font-size:.72rem;padding:10px;resize:vertical;user-select:all;-webkit-user-select:all;}
   .card .row{display:flex;gap:8px;margin-top:10px;}
   .card button{flex:1;border:none;border-radius:10px;padding:10px;font-weight:800;font-size:.8rem;cursor:pointer;}
+  .b-primary{background:var(--go);color:#10140a;}
   .b-close{background:var(--panel2);color:var(--ink);}
   .b-fmt{background:none;border:1px solid var(--line)!important;color:var(--mut);}
   .b-fmt.on{color:var(--go);border-color:var(--go)!important;}
+  @media (max-width:370px){
+    .summary{grid-template-columns:1fr;}
+    .groups{gap:7px;}
+    .gtile{padding:12px 6px;}
+    .gtile .gn{font-size:1rem;}
+  }
 </style>
 
 <body>
@@ -99,6 +117,7 @@
   <div class="title">What did you do?</div>
   <div class="clock" id="clock"></div>
   <div class="sub">Pick a muscle group, then tap each exercise you actually did. Every tap is stamped with the day &amp; time — undo is right there if you mis-tap.</div>
+  <div class="summary" id="summary"></div>
 
   <div class="sech">1 · Muscle group</div>
   <div class="groups" id="groups"></div>
@@ -111,6 +130,7 @@
     <span class="stat" id="stat"></span>
     <button class="exp" id="expBtn">Export</button>
   </div>
+  <div class="filters" id="filters"></div>
   <div id="history"></div>
 </div>
 
@@ -125,6 +145,10 @@
       <button class="b-fmt" id="fmtJson">JSON</button>
     </div>
     <textarea id="expText" readonly></textarea>
+    <div class="row">
+      <button class="b-primary" id="copyBtn">Copy</button>
+      <button class="b-close" id="downloadBtn">Download</button>
+    </div>
     <div class="row"><button class="b-close" id="closeBtn">Close</button></div>
   </div>
 </div>
@@ -133,7 +157,7 @@
 const $=id=>document.getElementById(id);
 
 const GROUPS=[
-  {name:"Chest+Tri",hex:"#ff6b5e",ex:["Machine Chest Press","Cable Crossover","Incline DB Press","Tricep Pushdown","Overhead Cable Ext"]},
+  {name:"Chest+Tri",hex:"#ff6b5e",ex:["Machine Chest Press","Cable Crossover","Incline Dumbbell Press","Tricep Pushdown","Overhead Cable Ext"]},
   {name:"Back+Bi",hex:"#4cc4ff",ex:["Lat Pulldown","Chest-Supported Row","Close-Grip Pulldown","Hammer Curl","Dumbbell Curl"]},
   {name:"Shoulders",hex:"#b98bff",ex:["Machine Shoulder Press","Lateral Raises","Reverse Pec Dec","Front Raises"]},
   {name:"Legs",hex:"#37d68a",ex:["Leg Extension","Leg Curl","Half Squat","Calf Raises","Adductors","Abductors"]},
@@ -143,6 +167,7 @@ const GROUPS=[
 function groupHex(g){const x=GROUPS.find(z=>z.name===g);return x?x.hex:"#888";}
 
 let curGroup=0, log=[], memFallback={};
+let historyFilter="all";
 
 // SIMPLIFIED STORAGE - works everywhere (no external dependencies)
 async function sGet(k){
@@ -154,8 +179,22 @@ async function sSet(k,v){
   try{localStorage.setItem(k,v);}catch(e){}
 }
 const KEY="ds5log:entries";
-async function loadLog(){const raw=await sGet(KEY);log=raw?JSON.parse(raw):[];}
+async function loadLog(){
+  const raw=await sGet(KEY);
+  if(!raw){log=[];return;}
+  try{
+    const parsed=JSON.parse(raw);
+    log=Array.isArray(parsed)?parsed.filter(e=>e&&e.ex&&e.group&&e.ts):[];
+  }catch(e){
+    log=[];
+    showToast("Saved log could not be read",false);
+  }
+}
 async function saveLog(){await sSet(KEY,JSON.stringify(log));}
+function esc(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
+function todayKey(){return new Date().toISOString().slice(0,10);}
+function entryKey(e){return e.id||e.ts;}
+function makeId(){return (typeof crypto!=="undefined"&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2));}
 
 function renderGroups(){
   $("groups").innerHTML=GROUPS.map((g,i)=>{
@@ -170,54 +209,126 @@ function renderGroups(){
 function renderExs(){
   const g=GROUPS[curGroup];
   $("exsHead").textContent="2 · Tap what you did — "+g.name;
-  $("exs").innerHTML=g.ex.map(e=>`<button class="exbtn" data-ex="${e}" style="border-color:${g.hex}66"><span class="ed" style="background:${g.hex}"></span><span class="et">${e}</span></button>`).join("");
+  $("exs").innerHTML=g.ex.map(e=>`<button class="exbtn" data-ex="${esc(e)}" style="border-color:${g.hex}66"><span class="ed" style="background:${g.hex}"></span><span class="et">${esc(e)}</span></button>`).join("");
   $("exs").querySelectorAll("[data-ex]").forEach(el=>el.onclick=()=>doLog(el.dataset.ex,g.name));
 }
 
 let lastTs=null;
 async function doLog(ex,group){
   const now=new Date(); const ts=now.toISOString();
-  log.push({ex,group,ts}); lastTs=ts;
-  await saveLog(); renderHistory();
-  $("toastMsg").textContent="Logged: "+ex;
+  const entry={id:makeId(),ex,group,ts};
+  log.push(entry); lastTs=entry.id;
+  await saveLog(); renderAll();
+  showToast("Logged: "+ex,true);
+}
+async function undoLast(){ if(lastTs){await del(lastTs);lastTs=null;$("toast").classList.remove("show");} }
+async function del(key){ log=log.filter(e=>entryKey(e)!==key); await saveLog(); renderAll(); }
+function showToast(message,canUndo){
+  $("toastMsg").textContent=message;
+  $("undoBtn").style.display=canUndo?"inline-block":"none";
   const t=$("toast"); t.classList.add("show");
   clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove("show"),2600);
 }
-async function undoLast(){ if(lastTs){await del(lastTs);lastTs=null;$("toast").classList.remove("show");} }
-async function del(ts){ log=log.filter(e=>e.ts!==ts); await saveLog(); renderHistory(); }
+
+function renderSummary(){
+  const today=todayKey();
+  const todayItems=log.filter(e=>e.ts.slice(0,10)===today);
+  const last=log.length?log.slice().sort((a,b)=>b.ts.localeCompare(a.ts))[0]:null;
+  const groupsToday=[...new Set(todayItems.map(e=>e.group))];
+  $("summary").innerHTML=[
+    ["Today",todayItems.length||"0",true],
+    ["Groups",groupsToday.length||"0",false],
+    ["Last",last?last.group.replace("+"," + "):"None",false]
+  ].map(([k,v,hot])=>`<div class="sumcard ${hot?"hot":""}"><div class="sk">${esc(k)}</div><div class="sv">${esc(v)}</div></div>`).join("");
+}
+
+function renderFilters(){
+  const filters=[
+    ["all","All"],
+    ["today","Today"],
+    ["7d","7 days"],
+    ["30d","30 days"]
+  ];
+  $("filters").innerHTML=filters.map(([key,label])=>`<button class="fbtn ${historyFilter===key?"on":""}" type="button" data-filter="${key}">${label}</button>`).join("");
+  $("filters").querySelectorAll("[data-filter]").forEach(el=>el.onclick=()=>{historyFilter=el.dataset.filter;renderHistory();renderFilters();});
+}
+
+function visibleLog(){
+  const now=Date.now();
+  if(historyFilter==="today")return log.filter(e=>e.ts.slice(0,10)===todayKey());
+  if(historyFilter==="7d")return log.filter(e=>now-new Date(e.ts).getTime()<=7*86400000);
+  if(historyFilter==="30d")return log.filter(e=>now-new Date(e.ts).getTime()<=30*86400000);
+  return log;
+}
 
 function renderHistory(){
+  const itemsForView=visibleLog();
   $("stat").textContent = log.length ? (log.length+" logs · "+new Set(log.map(e=>e.ts.slice(0,10))).size+" days") : "";
   if(!log.length){$("history").innerHTML='<div class="empty">No entries yet. Pick a group above and tap what you did.</div>';return;}
+  if(!itemsForView.length){$("history").innerHTML='<div class="empty">Nothing in this filter yet.</div>';return;}
   const byDay={};
-  log.forEach(e=>{const d=e.ts.slice(0,10);(byDay[d]=byDay[d]||[]).push(e);});
+  itemsForView.forEach(e=>{const d=e.ts.slice(0,10);(byDay[d]=byDay[d]||[]).push(e);});
   const days=Object.keys(byDay).sort().reverse();
   let h="";
   days.forEach(d=>{
     const dd=new Date(d+"T00:00:00");
     const lbl=dd.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"short"});
     const items=byDay[d].slice().sort((a,b)=>b.ts.localeCompare(a.ts));
-    h+=`<div class="day"><div class="dayhd">${lbl}<span class="dc">${items.length} logged</span></div>`;
+    h+=`<div class="day"><div class="dayhd">${esc(lbl)}<span class="dc">${items.length} logged</span></div>`;
     items.forEach(e=>{
       const tm=new Date(e.ts).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
-      h+=`<div class="ent"><span class="dot" style="background:${groupHex(e.group)}"></span><span class="et">${tm}</span><span class="en">${e.ex}</span><span class="del" data-ts="${e.ts}">✕</span></div>`;
+      h+=`<div class="ent"><span class="dot" style="background:${groupHex(e.group)}"></span><span class="et">${esc(tm)}</span><span class="en">${esc(e.ex)}</span><button class="del" type="button" data-key="${esc(entryKey(e))}" aria-label="Delete ${esc(e.ex)}">✕</button></div>`;
     });
     h+=`</div>`;
   });
   $("history").innerHTML=h;
-  $("history").querySelectorAll(".del").forEach(el=>el.onclick=()=>del(el.dataset.ts));
+  $("history").querySelectorAll(".del").forEach(el=>el.onclick=()=>{
+    if(confirm("Delete this log entry?"))del(el.dataset.key);
+  });
+}
+
+function renderAll(){
+  renderSummary();
+  renderHistory();
 }
 
 /* export */
 let expFmt="csv";
+function csvCell(v){return `"${String(v).replace(/"/g,'""')}"`;}
 function buildExport(){
   if(expFmt==="json")return JSON.stringify(log,null,2);
-  let s="Date,Time,Exercise,Group\n";
+  let s="Date,Time,ISO,Exercise,Group\n";
   log.slice().sort((a,b)=>a.ts.localeCompare(b.ts)).forEach(e=>{
     const d=new Date(e.ts);
-    s+=`${e.ts.slice(0,10)},${d.toLocaleTimeString(undefined,{hour12:false})},"${e.ex}",${e.group}\n`;
+    s+=[e.ts.slice(0,10),d.toLocaleTimeString(undefined,{hour12:false}),e.ts,e.ex,e.group].map(csvCell).join(",")+"\n";
   });
   return s;
+}
+
+async function copyExport(){
+  $("expText").select();
+  const text=$("expText").value;
+  try{
+    await navigator.clipboard.writeText(text);
+    showToast("Export copied",false);
+  }catch(e){
+    document.execCommand("copy");
+    showToast("Export selected",false);
+  }
+}
+
+function downloadExport(){
+  const text=buildExport();
+  const ext=expFmt==="json"?"json":"csv";
+  const blob=new Blob([text],{type:expFmt==="json"?"application/json":"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`ds5-workout-log-${todayKey()}.${ext}`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 function tick(){
@@ -230,9 +341,12 @@ function tick(){
   $("undoBtn").onclick=undoLast;
   $("expBtn").onclick=()=>{$("expText").value=buildExport();$("modal").classList.add("show");};
   $("closeBtn").onclick=()=>$("modal").classList.remove("show");
+  $("copyBtn").onclick=copyExport;
+  $("downloadBtn").onclick=downloadExport;
   $("fmtCsv").onclick=()=>{expFmt="csv";$("fmtCsv").classList.add("on");$("fmtJson").classList.remove("on");$("expText").value=buildExport();};
   $("fmtJson").onclick=()=>{expFmt="json";$("fmtJson").classList.add("on");$("fmtCsv").classList.remove("on");$("expText").value=buildExport();};
-  await loadLog(); renderHistory();
+  renderFilters();
+  await loadLog(); renderAll();
 })();
 
 if ("serviceWorker" in navigator) {
