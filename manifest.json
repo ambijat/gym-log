@@ -16,11 +16,18 @@
   "prefer_related_applications": false,
   "screenshots": [
     {
-      "src": "screenshots/log-mobile.png",
+      "src": "/gym-log/screenshots/log-mobile.png",
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "DS5 Workout Log quick exercise tracker"
+      "label": "DS5 Workout Log mobile exercise tracker"
+    },
+    {
+      "src": "/gym-log/screenshots/log-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "DS5 Workout Log desktop exercise tracker"
     }
   ],
   "icons": [
