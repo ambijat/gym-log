@@ -9,11 +9,38 @@
   "scope": "./",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
   "orientation": "portrait",
   "background_color": "#0c0e0d",
   "theme_color": "#0c0e0d",
   "categories": ["fitness", "health", "lifestyle"],
   "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+ds5log",
+      "url": "/gym-log/?source=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/gym-log/?import=file",
+      "accept": {
+        "application/json": [".json"],
+        "text/csv": [".csv"]
+      }
+    }
+  ],
+  "share_target": {
+    "action": "/gym-log/?share=1",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
   "screenshots": [
     {
       "src": "/gym-log/screenshots/log-mobile.png",

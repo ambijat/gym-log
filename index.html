@@ -292,6 +292,89 @@ function renderAll(){
   renderHistory();
 }
 
+function normalizeEntry(entry){
+  if(!entry||!entry.ex||!entry.group||!entry.ts)return null;
+  return {id:entry.id||makeId(),ex:String(entry.ex),group:String(entry.group),ts:String(entry.ts)};
+}
+
+function parseCsvRows(text){
+  const rows=[];let row=[],cell="",q=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i],next=text[i+1];
+    if(q&&ch==="\""&&next==="\""){cell+="\"";i++;continue;}
+    if(ch==="\""){q=!q;continue;}
+    if(ch===","&&!q){row.push(cell);cell="";continue;}
+    if((ch==="\n"||ch==="\r")&&!q){
+      if(ch==="\r"&&next==="\n")i++;
+      row.push(cell);cell="";
+      if(row.some(v=>v.trim()))rows.push(row);
+      row=[];
+      continue;
+    }
+    cell+=ch;
+  }
+  row.push(cell);
+  if(row.some(v=>v.trim()))rows.push(row);
+  return rows;
+}
+
+function parseLogImport(text){
+  const trimmed=text.trim();
+  if(!trimmed)return [];
+  if(trimmed[0]==="[" || trimmed[0]==="{"){
+    const data=JSON.parse(trimmed);
+    return (Array.isArray(data)?data:[data]).map(normalizeEntry).filter(Boolean);
+  }
+  const rows=parseCsvRows(trimmed);
+  const head=rows.shift()||[];
+  const idx=name=>head.findIndex(h=>h.trim().toLowerCase()===name);
+  const dateI=idx("date"), timeI=idx("time"), isoI=idx("iso"), exI=idx("exercise"), groupI=idx("group");
+  return rows.map(r=>{
+    const ts=isoI>=0&&r[isoI]?r[isoI]:new Date(`${r[dateI]||todayKey()} ${r[timeI]||"00:00"}`).toISOString();
+    return normalizeEntry({ex:r[exI],group:r[groupI],ts});
+  }).filter(Boolean);
+}
+
+async function importLogText(text,name){
+  try{
+    const incoming=parseLogImport(text);
+    if(!incoming.length){showToast("No workout entries found",false);return;}
+    const seen=new Set(log.map(e=>`${e.ts}|${e.ex}|${e.group}`));
+    const fresh=incoming.filter(e=>{
+      const key=`${e.ts}|${e.ex}|${e.group}`;
+      if(seen.has(key))return false;
+      seen.add(key);
+      return true;
+    });
+    if(!fresh.length){showToast("Import already in log",false);return;}
+    log=log.concat(fresh).sort((a,b)=>a.ts.localeCompare(b.ts));
+    await saveLog(); renderAll();
+    showToast(`Imported ${fresh.length} from ${name||"file"}`,false);
+  }catch(e){
+    showToast("Could not import workout file",false);
+  }
+}
+
+function setupFileHandling(){
+  if(!("launchQueue" in window))return;
+  window.launchQueue.setConsumer(async params=>{
+    if(!params.files||!params.files.length)return;
+    for(const handle of params.files){
+      const file=await handle.getFile();
+      await importLogText(await file.text(),file.name);
+    }
+  });
+}
+
+async function handleSharedLaunch(){
+  const params=new URLSearchParams(location.search);
+  if(!params.has("share"))return;
+  const text=[params.get("title"),params.get("text"),params.get("url")].filter(Boolean).join("\n").trim();
+  if(!text)return;
+  await importLogText(text,"shared text");
+  window.history.replaceState(null,"",location.pathname);
+}
+
 /* export */
 let expFmt="csv";
 function csvCell(v){return `"${String(v).replace(/"/g,'""')}"`;}
@@ -338,6 +421,7 @@ function tick(){
 
 (async function(){
   renderGroups(); renderExs(); tick(); setInterval(tick,1000);
+  setupFileHandling();
   $("undoBtn").onclick=undoLast;
   $("expBtn").onclick=()=>{$("expText").value=buildExport();$("modal").classList.add("show");};
   $("closeBtn").onclick=()=>$("modal").classList.remove("show");
@@ -346,7 +430,7 @@ function tick(){
   $("fmtCsv").onclick=()=>{expFmt="csv";$("fmtCsv").classList.add("on");$("fmtJson").classList.remove("on");$("expText").value=buildExport();};
   $("fmtJson").onclick=()=>{expFmt="json";$("fmtJson").classList.add("on");$("fmtCsv").classList.remove("on");$("expText").value=buildExport();};
   renderFilters();
-  await loadLog(); renderAll();
+  await loadLog(); renderAll(); await handleSharedLaunch();
 })();
 
 if ("serviceWorker" in navigator) {
