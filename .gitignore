@@ -1,0 +1,19 @@
+# Android/Gradle build outputs
+.gradle/
+build/
+app/build/
+
+# Local signing artifacts
+*.keystore
+
+# Generated release artifacts
+*.aab
+*.apk
+*.apks
+*.idsig
+
+# Bubblewrap transient outputs
+app-release-unsigned-aligned.apk
+
+# Local machine settings
+local.properties

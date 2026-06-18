@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ambijat.gymlog",
+      "sha256_cert_fingerprints": [
+        "55:87:0C:49:8E:8C:81:A7:D1:5E:97:B3:EB:95:B9:A9:48:08:01:CB:04:66:D9:07:15:0B:08:CF:53:FF:EE:7B"
+      ]
+    }
+  }
+]
