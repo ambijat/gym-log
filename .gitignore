@@ -17,3 +17,4 @@ app-release-unsigned-aligned.apk
 
 # Local machine settings
 local.properties
+.vscode/
