@@ -158,12 +158,12 @@
 const $=id=>document.getElementById(id);
 
 const GROUPS=[
-  {name:"Chest+Tri",hex:"#ff6b5e",ex:["Machine Chest Press","Cable Crossover","Incline Dumbbell Press","Tricep Pushdown","Overhead Cable Ext"]},
+  {name:"Chest+Tri",hex:"#ff6b5e",ex:["Chest Press","Cable Crossover","Incline Dumbbell Press","Tricep Pushdown","Overhead Cable Ext"]},
   {name:"Back+Bi",hex:"#4cc4ff",ex:["Lat Pulldown","Chest-Supported Row","Close-Grip Pulldown","Hammer Curl","Dumbbell Curl"]},
   {name:"Shoulders",hex:"#b98bff",ex:["Machine Shoulder Press","Lateral Raises","Reverse Pec Dec","Front Raises"]},
   {name:"Legs",hex:"#37d68a",ex:["Leg Extension","Leg Curl","Half Squat","Calf Raises","Adductors","Abductors"]},
-  {name:"Core",hex:"#ffd23f",ex:["Plank","Bird Dog","Dead Bug","Pallof Press","Med-Ball Circuit"]},
-  {name:"Cardio",hex:"#2fe6c8",ex:["Skill Mill","Air Bike","Elliptical","Spinning","Walk / Jog","Swim"]},
+  {name:"Core+Abs",hex:"#ffd23f",ex:["Plank","Bird Dog","Dead Bug","Lunges","Med-Ball Circuit","Cable Abs"]},
+  {name:"Cardio",hex:"#2fe6c8",ex:["Skill Mill","Air Bike","Cross Trainer","Spinning","SkiERG","Swim"]},
 ];
 function groupHex(g){const x=GROUPS.find(z=>z.name===g);return x?x.hex:"#888";}
 
