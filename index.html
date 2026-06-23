@@ -139,7 +139,7 @@
 <div class="modal" id="modal">
   <div class="card">
     <h3>Export log</h3>
-    <p>Long-press the text, Select All, copy — then paste it back to Claude for pattern analysis.</p>
+    <p id="exportScope"></p>
     <div class="row" style="margin:0 0 8px">
       <button class="b-fmt on" id="fmtCsv">CSV</button>
       <button class="b-fmt" id="fmtJson">JSON</button>
@@ -379,10 +379,21 @@ async function handleSharedLaunch(){
 /* export */
 let expFmt="csv";
 function csvCell(v){return `"${String(v).replace(/"/g,'""')}"`;}
-function buildExport(){
-  if(expFmt==="json")return JSON.stringify(log,null,2);
+function exportRows(){
+  return visibleLog().slice().sort((a,b)=>a.ts.localeCompare(b.ts));
+}
+function exportScopeLabel(){
+  return ({all:"all history",today:"today", "7d":"the last 7 days", "30d":"the last 30 days"}[historyFilter]||"selected history");
+}
+function updateExportPreview(){
+  const rows=exportRows();
+  $("exportScope").textContent=`Exporting ${rows.length} ${rows.length===1?"entry":"entries"} from ${exportScopeLabel()}.`;
+  $("expText").value=buildExport(rows);
+}
+function buildExport(rows=exportRows()){
+  if(expFmt==="json")return JSON.stringify(rows,null,2);
   let s="Date,Time,ISO,Exercise,Group\n";
-  log.slice().sort((a,b)=>a.ts.localeCompare(b.ts)).forEach(e=>{
+  rows.forEach(e=>{
     const d=new Date(e.ts);
     s+=[e.ts.slice(0,10),d.toLocaleTimeString(undefined,{hour12:false}),e.ts,e.ex,e.group].map(csvCell).join(",")+"\n";
   });
@@ -408,20 +419,30 @@ function downloadExport(){
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
   a.href=url;
-  a.download=`ds5-workout-log-${todayKey()}.${ext}`;
+  a.download=`ds5-workout-log-${historyFilter}-${todayKey()}.${ext}`;
   document.body.appendChild(a);
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
 }
 
-function emailExport(){
+async function emailExport(){
   const data=buildExport();
-  const clipped=data.length>1200;
-  const body=clipped?data.slice(0,1200)+"\n\n[Export truncated. Use Copy or Download in DS5 Log for the full file.]":data;
-  const subject=`DS5 workout log ${todayKey()}`;
+  const ext=expFmt==="json"?"json":"csv";
+  const fileName=`ds5-workout-log-${historyFilter}-${todayKey()}.${ext}`;
+  const fileType=expFmt==="json"?"application/json":"text/csv";
+  const subject=`DS5 workout log ${exportScopeLabel()} ${todayKey()}`;
+  const file=typeof File!=="undefined"?new File([data],fileName,{type:fileType}):null;
+  if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({title:subject,text:subject,files:[file]});
+      return;
+    }catch(e){
+      if(e&&e.name==="AbortError")return;
+    }
+  }
+  const body=data;
   location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  if(clipped)showToast("Email draft opened with a preview",false);
 }
 
 function tick(){
@@ -433,13 +454,13 @@ function tick(){
   renderGroups(); renderExs(); tick(); setInterval(tick,1000);
   setupFileHandling();
   $("undoBtn").onclick=undoLast;
-  $("expBtn").onclick=()=>{$("expText").value=buildExport();$("modal").classList.add("show");};
+  $("expBtn").onclick=()=>{updateExportPreview();$("modal").classList.add("show");};
   $("closeBtn").onclick=()=>$("modal").classList.remove("show");
   $("copyBtn").onclick=copyExport;
   $("emailBtn").onclick=emailExport;
   $("downloadBtn").onclick=downloadExport;
-  $("fmtCsv").onclick=()=>{expFmt="csv";$("fmtCsv").classList.add("on");$("fmtJson").classList.remove("on");$("expText").value=buildExport();};
-  $("fmtJson").onclick=()=>{expFmt="json";$("fmtJson").classList.add("on");$("fmtCsv").classList.remove("on");$("expText").value=buildExport();};
+  $("fmtCsv").onclick=()=>{expFmt="csv";$("fmtCsv").classList.add("on");$("fmtJson").classList.remove("on");updateExportPreview();};
+  $("fmtJson").onclick=()=>{expFmt="json";$("fmtJson").classList.add("on");$("fmtCsv").classList.remove("on");updateExportPreview();};
   renderFilters();
   await loadLog(); renderAll(); await handleSharedLaunch();
 })();
