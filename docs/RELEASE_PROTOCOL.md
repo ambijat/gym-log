@@ -105,8 +105,8 @@ twa-manifest.json
 For the current release we used:
 
 ```text
-versionCode 6
-versionName "1.4"
+versionCode 7
+versionName "1.5"
 ```
 
 Check version fields:
@@ -274,10 +274,10 @@ Confirm APK version metadata:
   app/build/outputs/apk/release/app-release-signed.apk 2>/dev/null | sed -n '1,12p'
 ```
 
-For release 1.4, expected:
+For release 1.5, expected:
 
 ```text
-versionCode='6' versionName='1.4'
+versionCode='7' versionName='1.5'
 ```
 
 ## 11. Commit And Push Source Changes
@@ -334,12 +334,11 @@ app/build/outputs/bundle/release/app-release-signed.aab
 6. Add release notes:
 
 ```text
-Fixed workout log export and email sharing.
+Improved History scrolling.
 
-- Export now follows the selected History filter.
-- Today, 7 days, 30 days, and All export the same entries shown on screen.
-- Email export no longer truncates log data.
-- Added full-file sharing for CSV and JSON exports.
+- History now stays inside a practical scroll window.
+- All and 30 days no longer stretch the whole app page.
+- Filter buttons remain visible above the History list.
 ```
 
 7. Review warnings.
@@ -364,7 +363,7 @@ After installing the internal test build:
 Current release source commits:
 
 ```text
-latest release commit: Build release 1.4 package
+latest release commit: Build release 1.5 package
 f3670f7 Reconfirm shoulder exercises
 d53fadd Bump release version to 1.2
 56baef7 Mail export corrected

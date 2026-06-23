@@ -77,6 +77,10 @@
   .fbtn{flex:0 0 auto;background:var(--panel);border:1px solid var(--line);color:var(--mut);border-radius:999px;font-size:.68rem;font-weight:800;padding:7px 10px;cursor:pointer;}
   .fbtn.on{background:var(--go);border-color:var(--go);color:#10140a;}
 
+  .history-window{max-height:min(430px,46dvh);overflow-y:auto;padding-right:4px;-webkit-overflow-scrolling:touch;scrollbar-color:var(--line) transparent;}
+  .history-window::-webkit-scrollbar{width:6px;}
+  .history-window::-webkit-scrollbar-thumb{background:var(--line);border-radius:999px;}
+  .history-window::-webkit-scrollbar-track{background:transparent;}
   .day{margin-bottom:14px;}
   .dayhd{font-family:'Bebas Neue',sans-serif;font-size:1.18rem;letter-spacing:.04em;color:var(--go);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:baseline;}
   .dayhd .dc{font-family:'Hanken Grotesk';font-size:.64rem;color:var(--mut2);font-weight:700;letter-spacing:.04em;}
@@ -131,7 +135,9 @@
     <button class="exp" id="expBtn">Export</button>
   </div>
   <div class="filters" id="filters"></div>
-  <div id="history"></div>
+  <div class="history-window">
+    <div id="history"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"><span id="toastMsg"></span><button id="undoBtn">Undo</button></div>

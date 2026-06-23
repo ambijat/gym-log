@@ -1,4 +1,4 @@
-const VERSION = "v8";
+const VERSION = "v9";
 const CACHE_PREFIX = "ds5-";
 const APP_CACHE = `${CACHE_PREFIX}workout-${VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${VERSION}`;
