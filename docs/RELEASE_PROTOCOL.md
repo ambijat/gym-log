@@ -105,8 +105,8 @@ twa-manifest.json
 For the current release we used:
 
 ```text
-versionCode 7
-versionName "1.5"
+versionCode 8
+versionName "1.6"
 ```
 
 Check version fields:
@@ -274,10 +274,10 @@ Confirm APK version metadata:
   app/build/outputs/apk/release/app-release-signed.apk 2>/dev/null | sed -n '1,12p'
 ```
 
-For release 1.5, expected:
+For release 1.6, expected:
 
 ```text
-versionCode='7' versionName='1.5'
+versionCode='8' versionName='1.6'
 ```
 
 ## 11. Commit And Push Source Changes
@@ -363,7 +363,7 @@ After installing the internal test build:
 Current release source commits:
 
 ```text
-latest release commit: Build release 1.5 package
+latest release commit: Build release 1.6 package
 f3670f7 Reconfirm shoulder exercises
 d53fadd Bump release version to 1.2
 56baef7 Mail export corrected
