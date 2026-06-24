@@ -199,7 +199,14 @@ async function loadLog(){
 }
 async function saveLog(){await sSet(KEY,JSON.stringify(log));}
 function esc(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
-function todayKey(){return new Date().toISOString().slice(0,10);}
+function localDateKey(value=new Date()){
+  const d=value instanceof Date?value:new Date(value);
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+function todayKey(){return localDateKey();}
 function entryKey(e){return e.id||e.ts;}
 function makeId(){return (typeof crypto!=="undefined"&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2));}
 
@@ -239,7 +246,7 @@ function showToast(message,canUndo){
 
 function renderSummary(){
   const today=todayKey();
-  const todayItems=log.filter(e=>e.ts.slice(0,10)===today);
+  const todayItems=log.filter(e=>localDateKey(e.ts)===today);
   const last=log.length?log.slice().sort((a,b)=>b.ts.localeCompare(a.ts))[0]:null;
   const groupsToday=[...new Set(todayItems.map(e=>e.group))];
   $("summary").innerHTML=[
@@ -262,7 +269,7 @@ function renderFilters(){
 
 function visibleLog(){
   const now=Date.now();
-  if(historyFilter==="today")return log.filter(e=>e.ts.slice(0,10)===todayKey());
+  if(historyFilter==="today")return log.filter(e=>localDateKey(e.ts)===todayKey());
   if(historyFilter==="7d")return log.filter(e=>now-new Date(e.ts).getTime()<=7*86400000);
   if(historyFilter==="30d")return log.filter(e=>now-new Date(e.ts).getTime()<=30*86400000);
   return log;
@@ -270,11 +277,11 @@ function visibleLog(){
 
 function renderHistory(){
   const itemsForView=visibleLog();
-  $("stat").textContent = log.length ? (log.length+" logs · "+new Set(log.map(e=>e.ts.slice(0,10))).size+" days") : "";
+  $("stat").textContent = log.length ? (log.length+" logs · "+new Set(log.map(e=>localDateKey(e.ts))).size+" days") : "";
   if(!log.length){$("history").innerHTML='<div class="empty">No entries yet. Pick a group above and tap what you did.</div>';return;}
   if(!itemsForView.length){$("history").innerHTML='<div class="empty">Nothing in this filter yet.</div>';return;}
   const byDay={};
-  itemsForView.forEach(e=>{const d=e.ts.slice(0,10);(byDay[d]=byDay[d]||[]).push(e);});
+  itemsForView.forEach(e=>{const d=localDateKey(e.ts);(byDay[d]=byDay[d]||[]).push(e);});
   const days=Object.keys(byDay).sort().reverse();
   let h="";
   days.forEach(d=>{
@@ -401,7 +408,7 @@ function buildExport(rows=exportRows()){
   let s="Date,Time,ISO,Exercise,Group\n";
   rows.forEach(e=>{
     const d=new Date(e.ts);
-    s+=[e.ts.slice(0,10),d.toLocaleTimeString(undefined,{hour12:false}),e.ts,e.ex,e.group].map(csvCell).join(",")+"\n";
+    s+=[localDateKey(d),d.toLocaleTimeString(undefined,{hour12:false}),e.ts,e.ex,e.group].map(csvCell).join(",")+"\n";
   });
   return s;
 }
@@ -453,7 +460,10 @@ async function emailExport(){
 
 function tick(){
   const d=new Date();
+  const key=localDateKey(d);
   $("clock").textContent="Stamps as  "+d.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"})+"  ·  "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
+  if(window._dayKey&&window._dayKey!==key)renderAll();
+  window._dayKey=key;
 }
 
 (async function(){
