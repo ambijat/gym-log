@@ -74,7 +74,7 @@ javac -version
 
 ## 4. Edit App Code
 
-For the email/export fix, the changed file was:
+For the Today history rollover fix, the changed file was:
 
 ```text
 index.html
@@ -82,10 +82,9 @@ index.html
 
 The important behavior change:
 
-- export uses the selected History filter via `visibleLog()`
-- Email no longer truncates data
-- Web Share file sharing is attempted before `mailto:`
-- Copy, Download, Email, CSV, and JSON all use the same filtered dataset
+- Today uses the phone's local calendar date instead of UTC.
+- Yesterday's entries no longer appear in the Today filter after midnight.
+- Summary counts, History grouping, and CSV export dates use the same local date logic.
 
 Syntax check for the inline JavaScript:
 
@@ -105,8 +104,8 @@ twa-manifest.json
 For the current release we used:
 
 ```text
-versionCode 8
-versionName "1.6"
+versionCode 9
+versionName "1.7"
 ```
 
 Check version fields:
@@ -274,10 +273,10 @@ Confirm APK version metadata:
   app/build/outputs/apk/release/app-release-signed.apk 2>/dev/null | sed -n '1,12p'
 ```
 
-For release 1.6, expected:
+For release 1.7, expected:
 
 ```text
-versionCode='8' versionName='1.6'
+versionCode='9' versionName='1.7'
 ```
 
 ## 11. Commit And Push Source Changes
@@ -334,11 +333,11 @@ app/build/outputs/bundle/release/app-release-signed.aab
 6. Add release notes:
 
 ```text
-Improved History scrolling.
+Fixed Today history rollover.
 
-- History now stays inside a practical scroll window.
-- All and 30 days no longer stretch the whole app page.
-- Filter buttons remain visible above the History list.
+- Today now uses the phone's local calendar date.
+- Yesterday's logs no longer appear in Today after midnight.
+- History, summary counts, and CSV exports use the same local date logic.
 ```
 
 7. Review warnings.
@@ -363,7 +362,9 @@ After installing the internal test build:
 Current release source commits:
 
 ```text
-latest release commit: Build release 1.6 package
+latest release commit: Build release 1.7 package
+63a1de0 Record today's log date fix
+c6d4603 Fix local day rollover for logs
 f3670f7 Reconfirm shoulder exercises
 d53fadd Bump release version to 1.2
 56baef7 Mail export corrected
