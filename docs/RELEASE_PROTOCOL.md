@@ -74,17 +74,18 @@ javac -version
 
 ## 4. Edit App Code
 
-For the Today history rollover fix, the changed file was:
+For the completed-exercise star release, the changed files were:
 
 ```text
 index.html
+sw.js
 ```
 
 The important behavior change:
 
-- Today uses the phone's local calendar date instead of UTC.
-- Yesterday's entries no longer appear in the Today filter after midnight.
-- Summary counts, History grouping, and CSV export dates use the same local date logic.
+- Exercises logged today show a small green star on their exercise card.
+- Star state is derived from today's dated history entries.
+- History, export, undo, filters, and counters keep using the existing log data.
 
 Syntax check for the inline JavaScript:
 
@@ -104,8 +105,8 @@ twa-manifest.json
 For the current release we used:
 
 ```text
-versionCode 9
-versionName "1.7"
+versionCode 10
+versionName "1.8"
 ```
 
 Check version fields:
@@ -273,10 +274,10 @@ Confirm APK version metadata:
   app/build/outputs/apk/release/app-release-signed.apk 2>/dev/null | sed -n '1,12p'
 ```
 
-For release 1.7, expected:
+For release 1.8, expected:
 
 ```text
-versionCode='9' versionName='1.7'
+versionCode='10' versionName='1.8'
 ```
 
 ## 11. Commit And Push Source Changes
@@ -333,11 +334,11 @@ app/build/outputs/bundle/release/app-release-signed.aab
 6. Add release notes:
 
 ```text
-Fixed Today history rollover.
+Added completed-exercise stars.
 
-- Today now uses the phone's local calendar date.
-- Yesterday's logs no longer appear in Today after midnight.
-- History, summary counts, and CSV exports use the same local date logic.
+- Exercises logged today now show a small green star.
+- Stars are restored from today's history entries when the app reopens.
+- History, export, undo, filters, and counters continue to use the existing log.
 ```
 
 7. Review warnings.
@@ -350,6 +351,8 @@ Fixed Today history rollover.
 After installing the internal test build:
 
 - Add at least one workout log today.
+- Confirm the tapped exercise card shows a green star.
+- Close and reopen the app, then confirm today's starred exercises are still marked.
 - Open History.
 - Select `Today`, export/email, and confirm only today's entries are included.
 - Select `7 days`, export/email, and confirm entries match the visible list.
@@ -362,7 +365,8 @@ After installing the internal test build:
 Current release source commits:
 
 ```text
-latest release commit: Build release 1.7 package
+latest release commit: Build release 1.8 package
+191336f Show completed exercise stars
 63a1de0 Record today's log date fix
 c6d4603 Fix local day rollover for logs
 f3670f7 Reconfirm shoulder exercises
