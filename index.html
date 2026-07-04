@@ -56,11 +56,12 @@
 
   /* exercise buttons */
   .exs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:8px;}
-  .exbtn{display:flex;align-items:center;gap:9px;border:1.5px solid var(--line);background:var(--panel);
+  .exbtn{position:relative;display:flex;align-items:center;gap:9px;border:1.5px solid var(--line);background:var(--panel);
     border-radius:13px;padding:14px 12px;cursor:pointer;transition:.12s;min-height:58px;text-align:left;}
   .exbtn:active{transform:scale(.97);}
   .exbtn .ed{width:11px;height:11px;border-radius:50%;flex:none;}
   .exbtn .et{font-size:.92rem;font-weight:700;line-height:1.1;color:var(--ink);}
+  .exbtn .done-badge{position:absolute;right:11px;bottom:8px;color:var(--go);font-size:.78rem;line-height:1;text-shadow:0 0 8px rgba(196,255,31,.72);pointer-events:none;}
 
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(22px);background:var(--go);color:#10140a;
     font-weight:800;font-size:.85rem;padding:11px 12px 11px 18px;border-radius:13px;opacity:0;pointer-events:none;transition:.25s;
@@ -209,6 +210,11 @@ function localDateKey(value=new Date()){
 function todayKey(){return localDateKey();}
 function entryKey(e){return e.id||e.ts;}
 function makeId(){return (typeof crypto!=="undefined"&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2));}
+function completionKey(group,ex){return `${group}\u0000${ex}`;}
+function completedToday(){
+  const today=todayKey();
+  return new Set(log.filter(e=>localDateKey(e.ts)===today).map(e=>completionKey(e.group,e.ex)));
+}
 
 function renderGroups(){
   $("groups").innerHTML=GROUPS.map((g,i)=>{
@@ -222,8 +228,12 @@ function renderGroups(){
 }
 function renderExs(){
   const g=GROUPS[curGroup];
+  const done=completedToday();
   $("exsHead").textContent="2 · Tap what you did — "+g.name;
-  $("exs").innerHTML=g.ex.map(e=>`<button class="exbtn" data-ex="${esc(e)}" style="border-color:${g.hex}66"><span class="ed" style="background:${g.hex}"></span><span class="et">${esc(e)}</span></button>`).join("");
+  $("exs").innerHTML=g.ex.map(e=>{
+    const isDone=done.has(completionKey(g.name,e));
+    return `<button class="exbtn ${isDone?"done":""}" data-ex="${esc(e)}" style="border-color:${g.hex}66"><span class="ed" style="background:${g.hex}"></span><span class="et">${esc(e)}</span>${isDone?'<span class="done-badge" aria-hidden="true">★</span>':""}</button>`;
+  }).join("");
   $("exs").querySelectorAll("[data-ex]").forEach(el=>el.onclick=()=>doLog(el.dataset.ex,g.name));
 }
 
@@ -303,6 +313,7 @@ function renderHistory(){
 
 function renderAll(){
   renderSummary();
+  renderExs();
   renderHistory();
 }
 
@@ -479,6 +490,7 @@ function tick(){
   $("fmtJson").onclick=()=>{expFmt="json";$("fmtJson").classList.add("on");$("fmtCsv").classList.remove("on");updateExportPreview();};
   renderFilters();
   await loadLog(); renderAll(); await handleSharedLaunch();
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick();});
 })();
 
 if ("serviceWorker" in navigator) {
