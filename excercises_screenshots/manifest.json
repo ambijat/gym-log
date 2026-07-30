@@ -256,5 +256,23 @@
     "exercise": "skierg",
     "new_path": "excercises_screenshots/cardio/skierg/skierg-01.png",
     "confidence": 0.99
+  },
+  "Screenshot from 2026-07-30 12-17-54.png": {
+    "group": "shoulders",
+    "exercise": "cable-flyes",
+    "new_path": "excercises_screenshots/shoulders/cable-flyes/cable-flyes-01.png",
+    "confidence": 0.96
+  },
+  "Screenshot from 2026-07-30 12-19-01.png": {
+    "group": "shoulders",
+    "exercise": "reverse-pec-dec",
+    "new_path": "excercises_screenshots/shoulders/reverse-pec-dec/reverse-pec-dec-01.png",
+    "confidence": 0.98
+  },
+  "Screenshot from 2026-07-30 12-21-10.png": {
+    "group": "legs",
+    "exercise": "leg-extension",
+    "new_path": "excercises_screenshots/legs/leg-extension/leg-extension-01.png",
+    "confidence": 0.99
   }
 }
