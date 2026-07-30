@@ -197,12 +197,6 @@
     "new_path": "excercises_screenshots/chest-tri/tricep-pushdown/tricep-pushdown-01.png",
     "confidence": 0.99
   },
-  "Screenshot from 2026-07-30 12-01-49.png": {
-    "group": "back-bi",
-    "exercise": "dumbbell-curl",
-    "new_path": "excercises_screenshots/back-bi/dumbbell-curl/dumbbell-curl-01.png",
-    "confidence": 0.94
-  },
   "Screenshot from 2026-07-30 12-02-45.png": {
     "group": "back-bi",
     "exercise": "overhead-rope-extension",
@@ -273,6 +267,12 @@
     "group": "legs",
     "exercise": "leg-extension",
     "new_path": "excercises_screenshots/legs/leg-extension/leg-extension-01.png",
+    "confidence": 0.99
+  },
+  "Screenshot from 2026-07-30 13-14-27.png": {
+    "group": "back-bi",
+    "exercise": "chest-supported-dumbbell-row",
+    "new_path": "excercises_screenshots/back-bi/chest-supported-dumbbell-row/chest-supported-dumbbell-row-01.png",
     "confidence": 0.99
   }
 }
