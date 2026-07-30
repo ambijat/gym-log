@@ -1,4 +1,4 @@
-const VERSION = "v11";
+const VERSION = "v12";
 const CACHE_PREFIX = "ds5-";
 const APP_CACHE = `${CACHE_PREFIX}workout-${VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${VERSION}`;
@@ -11,15 +11,25 @@ const APP_SHELL = [
   "./icons/icon-192-maskable.png",
   "./icons/icon-512-maskable.png",
   "./assets/ex/bench-press.webp",
+  "./assets/ex/bird-dog.webp",
   "./assets/ex/cable-crossover.webp",
   "./assets/ex/close-grip-pulldown.webp",
+  "./assets/ex/dead-bug.webp",
+  "./assets/ex/dumbbell-curl.webp",
   "./assets/ex/dumbbell-flyes-pullovers.webp",
   "./assets/ex/face-pulls.webp",
+  "./assets/ex/front-lat-raises.webp",
   "./assets/ex/hammer-curl.webp",
+  "./assets/ex/hamstring-curl.webp",
   "./assets/ex/incline-dumbbell-press.webp",
   "./assets/ex/lat-pulldown.webp",
   "./assets/ex/lunges-walking.webp",
+  "./assets/ex/machine-shoulder-press.webp",
+  "./assets/ex/overhead-rope-extension.webp",
+  "./assets/ex/plank.webp",
+  "./assets/ex/skierg.webp",
   "./assets/ex/squat-half.webp",
+  "./assets/ex/tricep-pushdown.webp",
   "./screenshots/log-mobile.png",
   "./screenshots/log-wide.png"
 ];
