@@ -1,4 +1,4 @@
-const VERSION = "v10";
+const VERSION = "v11";
 const CACHE_PREFIX = "ds5-";
 const APP_CACHE = `${CACHE_PREFIX}workout-${VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${VERSION}`;
@@ -10,6 +10,16 @@ const APP_SHELL = [
   "./icons/icon-512.png",
   "./icons/icon-192-maskable.png",
   "./icons/icon-512-maskable.png",
+  "./assets/ex/bench-press.webp",
+  "./assets/ex/cable-crossover.webp",
+  "./assets/ex/close-grip-pulldown.webp",
+  "./assets/ex/dumbbell-flyes-pullovers.webp",
+  "./assets/ex/face-pulls.webp",
+  "./assets/ex/hammer-curl.webp",
+  "./assets/ex/incline-dumbbell-press.webp",
+  "./assets/ex/lat-pulldown.webp",
+  "./assets/ex/lunges-walking.webp",
+  "./assets/ex/squat-half.webp",
   "./screenshots/log-mobile.png",
   "./screenshots/log-wide.png"
 ];

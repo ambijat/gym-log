@@ -57,11 +57,21 @@
   /* exercise buttons */
   .exs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:8px;}
   .exbtn{position:relative;display:flex;align-items:center;gap:9px;border:1.5px solid var(--line);background:var(--panel);
-    border-radius:13px;padding:14px 12px;cursor:pointer;transition:.12s;min-height:58px;text-align:left;}
+    border-radius:13px;padding:14px 12px;cursor:pointer;transition:.12s;min-height:65px;text-align:left;
+    touch-action:manipulation;-webkit-touch-callout:none;user-select:none;}
   .exbtn:active{transform:scale(.97);}
   .exbtn .ed{width:11px;height:11px;border-radius:50%;flex:none;}
   .exbtn .et{font-size:.92rem;font-weight:700;line-height:1.1;color:var(--ink);}
   .exbtn .done-badge{position:absolute;right:11px;bottom:8px;color:var(--go);font-size:.78rem;line-height:1;text-shadow:0 0 8px rgba(196,255,31,.72);pointer-events:none;}
+  .exicon{width:34px;height:34px;border-radius:8px;object-fit:cover;flex:0 0 auto;pointer-events:none;}
+
+  .ex-img-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.82);z-index:9999;padding:24px;}
+  .ex-img-overlay.show{display:flex;}
+  .ex-img-overlay figure{margin:0;display:flex;flex-direction:column;align-items:center;}
+  .ex-img-overlay img{max-width:min(88vw,420px);max-height:70vh;width:auto;height:auto;
+    border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.6);}
+  .ex-img-overlay figcaption{margin-top:14px;color:#fff;font-size:15px;text-align:center;}
 
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(22px);background:var(--go);color:#10140a;
     font-weight:800;font-size:.85rem;padding:11px 12px 11px 18px;border-radius:13px;opacity:0;pointer-events:none;transition:.25s;
@@ -165,12 +175,54 @@
 const $=id=>document.getElementById(id);
 
 const GROUPS=[
-  {name:"Chest+Tri",hex:"#ff6b5e",ex:["Dumbbell Flyes / Pull Overs","Cable Crossover","Incline Dumbbell Press","Tricep / Frontal Pushdown","Bench Press / Incline","Push / Pull Ups"]},
-  {name:"Back+Bi",hex:"#4cc4ff",ex:["Lat Pulldown","Hip Thrust","Close-Grip Pulldown","Hammer Curl","Dumbbell Curl","Overhead Rope Extension"]},
-  {name:"Shoulders",hex:"#b98bff",ex:["Machine Shoulder Press","Front + Lat Raises","Reverse Pec Dec","Face Pulls","Cable Flyes","Arnold Press"]},
-  {name:"Legs",hex:"#37d68a",ex:["Squat (Half)","Lunges (Walking)","Hamstring Curl","Leg Extension","Standing Calf Raise","Adductors / Abductors"]},
-  {name:"Core+Abs",hex:"#ffd23f",ex:["Plank","Bird Dog","Dead Bug","Pallof Press","Medicine Ball Circuit","Cable Crunch"]},
-  {name:"Cardio",hex:"#2fe6c8",ex:["Skill Mill","Air Bike","Cross Trainer","Spinning","SkiERG","Swim"]},
+  {name:"Chest+Tri",hex:"#ff6b5e",ex:[
+    {name:"Dumbbell Flyes / Pull Overs",icon:"dumbbell-flyes-pullovers"},
+    {name:"Cable Crossover",icon:"cable-crossover"},
+    {name:"Incline Dumbbell Press",icon:"incline-dumbbell-press"},
+    {name:"Tricep / Frontal Pushdown"},
+    {name:"Bench Press / Incline",icon:"bench-press"},
+    {name:"Push / Pull Ups"}
+  ]},
+  {name:"Back+Bi",hex:"#4cc4ff",ex:[
+    {name:"Lat Pulldown",icon:"lat-pulldown"},
+    {name:"Hip Thrust"},
+    {name:"Close-Grip Pulldown",icon:"close-grip-pulldown"},
+    {name:"Hammer Curl",icon:"hammer-curl"},
+    {name:"Dumbbell Curl"},
+    {name:"Overhead Rope Extension"}
+  ]},
+  {name:"Shoulders",hex:"#b98bff",ex:[
+    {name:"Machine Shoulder Press"},
+    {name:"Front + Lat Raises"},
+    {name:"Reverse Pec Dec"},
+    {name:"Face Pulls",icon:"face-pulls"},
+    {name:"Cable Flyes"},
+    {name:"Arnold Press"}
+  ]},
+  {name:"Legs",hex:"#37d68a",ex:[
+    {name:"Squat (Half)",icon:"squat-half"},
+    {name:"Lunges (Walking)",icon:"lunges-walking"},
+    {name:"Hamstring Curl"},
+    {name:"Leg Extension"},
+    {name:"Standing Calf Raise"},
+    {name:"Adductors / Abductors"}
+  ]},
+  {name:"Core+Abs",hex:"#ffd23f",ex:[
+    {name:"Plank"},
+    {name:"Bird Dog"},
+    {name:"Dead Bug"},
+    {name:"Pallof Press"},
+    {name:"Medicine Ball Circuit"},
+    {name:"Cable Crunch"}
+  ]},
+  {name:"Cardio",hex:"#2fe6c8",ex:[
+    {name:"Skill Mill"},
+    {name:"Air Bike"},
+    {name:"Cross Trainer"},
+    {name:"Spinning"},
+    {name:"SkiERG"},
+    {name:"Swim"}
+  ]},
 ];
 function groupHex(g){const x=GROUPS.find(z=>z.name===g);return x?x.hex:"#888";}
 
@@ -231,10 +283,86 @@ function renderExs(){
   const done=completedToday();
   $("exsHead").textContent="2 · Tap what you did — "+g.name;
   $("exs").innerHTML=g.ex.map(e=>{
-    const isDone=done.has(completionKey(g.name,e));
-    return `<button class="exbtn ${isDone?"done":""}" data-ex="${esc(e)}" style="border-color:${g.hex}66"><span class="ed" style="background:${g.hex}"></span><span class="et">${esc(e)}</span>${isDone?'<span class="done-badge" aria-hidden="true">★</span>':""}</button>`;
+    const isDone=done.has(completionKey(g.name,e.name));
+    const visual=e.icon
+      ? `<img class="exicon" src="assets/ex/${esc(e.icon)}.webp" alt="" loading="lazy" draggable="false">`
+      : `<span class="ed" style="background:${g.hex}"></span>`;
+    return `<button class="exbtn ${isDone?"done":""}" data-ex="${esc(e.name)}"`
+      +(e.icon?` data-icon="${esc(e.icon)}"`:"")
+      +` style="border-color:${g.hex}66">${visual}`
+      +`<span class="et">${esc(e.name)}</span>`
+      +(isDone?'<span class="done-badge" aria-hidden="true">★</span>':"")
+      +`</button>`;
   }).join("");
-  $("exs").querySelectorAll("[data-ex]").forEach(el=>el.onclick=()=>doLog(el.dataset.ex,g.name));
+  wireExButtons(g);
+}
+
+function wireExButtons(g){
+  $("exs").querySelectorAll("[data-ex]").forEach(el=>{
+    const ex=el.dataset.ex, icon=el.dataset.icon||"";
+    let timer=null, longFired=false, moved=false, activePointer=null, sx=0, sy=0;
+    const clear=()=>{if(timer){clearTimeout(timer);timer=null;}};
+    const cancel=e=>{
+      if(activePointer!==null&&(!e||e.pointerId===activePointer)){
+        clear(); moved=true; activePointer=null;
+      }
+    };
+    el.addEventListener("pointerdown",e=>{
+      if(e.button!==0||activePointer!==null)return;
+      longFired=false; moved=false; activePointer=e.pointerId;
+      sx=e.clientX; sy=e.clientY; clear();
+      timer=setTimeout(()=>{
+        timer=null; longFired=true;
+        if(icon)showExImage(icon,ex);
+      },450);
+    });
+    el.addEventListener("pointermove",e=>{
+      if(e.pointerId!==activePointer||moved)return;
+      if(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10){
+        clear(); moved=true;
+      }
+    });
+    el.addEventListener("pointerup",e=>{
+      if(e.pointerId!==activePointer)return;
+      clear(); activePointer=null;
+      if(longFired||moved){e.preventDefault();return;}
+      doLog(ex,g.name);
+    });
+    el.addEventListener("pointercancel",cancel);
+    el.addEventListener("pointerleave",cancel);
+    el.addEventListener("click",e=>{
+      if(e.detail===0)doLog(ex,g.name);
+    });
+    el.addEventListener("contextmenu",e=>e.preventDefault());
+  });
+}
+
+function showExImage(icon,name){
+  let ov=document.getElementById("exImgOverlay");
+  if(!ov){
+    ov=document.createElement("div");
+    ov.id="exImgOverlay";
+    ov.className="ex-img-overlay";
+    ov.setAttribute("role","dialog");
+    ov.setAttribute("aria-modal","true");
+    ov.innerHTML='<figure><img alt=""><figcaption></figcaption></figure>';
+    document.body.appendChild(ov);
+  }
+  if(ov._cleanup)ov._cleanup();
+  ov.querySelector("img").src=`assets/ex/${icon}.webp`;
+  ov.querySelector("figcaption").textContent=name;
+  ov.setAttribute("aria-label",name);
+  ov.classList.add("show");
+  const close=()=>{
+    ov.classList.remove("show");
+    document.removeEventListener("pointerdown",close,true);
+    document.removeEventListener("keydown",onKey,true);
+    ov._cleanup=null;
+  };
+  const onKey=e=>{if(e.key==="Escape")close();};
+  ov._cleanup=close;
+  document.addEventListener("pointerdown",close,true);
+  document.addEventListener("keydown",onKey,true);
 }
 
 let lastTs=null;
