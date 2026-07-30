@@ -5,6 +5,15 @@ app/build/
 
 # Local signing artifacts
 *.keystore
+*.jks
+*.p12
+*.pfx
+*.pkcs12
+*.key
+*.pem
+key.properties
+keystore.properties
+signing.properties
 
 # Generated release artifacts
 *.aab
