@@ -184,5 +184,77 @@
     "exercise": "squat-half",
     "new_path": "excercises_screenshots/legs/squat-half/squat-half-01.png",
     "confidence": 0.95
+  },
+  "Screenshot from 2026-07-30 12-00-39.png": {
+    "group": "chest-tri",
+    "exercise": "tricep-pushdown",
+    "new_path": "excercises_screenshots/chest-tri/tricep-pushdown/_alt/tricep-pushdown-02.png",
+    "confidence": 0.98
+  },
+  "Screenshot from 2026-07-30 12-01-00.png": {
+    "group": "chest-tri",
+    "exercise": "tricep-pushdown",
+    "new_path": "excercises_screenshots/chest-tri/tricep-pushdown/tricep-pushdown-01.png",
+    "confidence": 0.99
+  },
+  "Screenshot from 2026-07-30 12-01-49.png": {
+    "group": "back-bi",
+    "exercise": "dumbbell-curl",
+    "new_path": "excercises_screenshots/back-bi/dumbbell-curl/dumbbell-curl-01.png",
+    "confidence": 0.94
+  },
+  "Screenshot from 2026-07-30 12-02-45.png": {
+    "group": "back-bi",
+    "exercise": "overhead-rope-extension",
+    "new_path": "excercises_screenshots/back-bi/overhead-rope-extension/overhead-rope-extension-01.png",
+    "confidence": 0.98
+  },
+  "Screenshot from 2026-07-30 12-05-34.png": {
+    "group": "shoulders",
+    "exercise": "machine-shoulder-press",
+    "new_path": "excercises_screenshots/shoulders/machine-shoulder-press/machine-shoulder-press-01.png",
+    "confidence": 0.99
+  },
+  "Screenshot from 2026-07-30 12-06-56.png": {
+    "group": "shoulders",
+    "exercise": "front-lat-raises",
+    "new_path": "excercises_screenshots/shoulders/front-lat-raises/front-lat-raises-01.png",
+    "confidence": 0.96
+  },
+  "Screenshot from 2026-07-30 12-08-13.png": {
+    "group": "legs",
+    "exercise": "hamstring-curl",
+    "new_path": "excercises_screenshots/legs/hamstring-curl/hamstring-curl-01.png",
+    "confidence": 0.99
+  },
+  "Screenshot from 2026-07-30 12-10-18.png": {
+    "group": "core-abs",
+    "exercise": "plank",
+    "new_path": "excercises_screenshots/core-abs/plank/plank-01.png",
+    "confidence": 0.99
+  },
+  "Screenshot from 2026-07-30 12-10-50.png": {
+    "group": "core-abs",
+    "exercise": "bird-dog",
+    "new_path": "excercises_screenshots/core-abs/bird-dog/_alt/bird-dog-02.png",
+    "confidence": 0.98
+  },
+  "Screenshot from 2026-07-30 12-11-10.png": {
+    "group": "core-abs",
+    "exercise": "bird-dog",
+    "new_path": "excercises_screenshots/core-abs/bird-dog/bird-dog-01.png",
+    "confidence": 0.99
+  },
+  "Screenshot from 2026-07-30 12-11-38.png": {
+    "group": "core-abs",
+    "exercise": "dead-bug",
+    "new_path": "excercises_screenshots/core-abs/dead-bug/dead-bug-01.png",
+    "confidence": 0.99
+  },
+  "Screenshot from 2026-07-30 12-12-08.png": {
+    "group": "cardio",
+    "exercise": "skierg",
+    "new_path": "excercises_screenshots/cardio/skierg/skierg-01.png",
+    "confidence": 0.99
   }
 }
