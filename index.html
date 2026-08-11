@@ -70,7 +70,8 @@
   .ex-img-overlay.show{display:flex;}
   .ex-img-overlay figure{margin:0;display:flex;flex-direction:column;align-items:center;}
   .ex-img-overlay img{max-width:min(88vw,420px);max-height:70vh;width:auto;height:auto;
-    border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.6);}
+    border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.6);
+    pointer-events:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
   .ex-img-overlay figcaption{margin-top:14px;color:#fff;font-size:15px;text-align:center;}
 
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(22px);background:var(--go);color:#10140a;
@@ -345,7 +346,8 @@ function showExImage(icon,name){
     ov.className="ex-img-overlay";
     ov.setAttribute("role","dialog");
     ov.setAttribute("aria-modal","true");
-    ov.innerHTML='<figure><img alt=""><figcaption></figcaption></figure>';
+    ov.innerHTML='<figure><img alt="" draggable="false"><figcaption></figcaption></figure>';
+    ov.addEventListener("contextmenu",e=>e.preventDefault());
     document.body.appendChild(ov);
   }
   if(ov._cleanup)ov._cleanup();
