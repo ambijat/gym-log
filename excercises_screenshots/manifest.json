@@ -1,4 +1,16 @@
 {
+  "Screenshot from 2026-08-11 18-32-06.png": {
+    "group": "core-abs",
+    "exercise": "pallof-press",
+    "new_path": "excercises_screenshots/core-abs/pallof-press/pallof-press-01.png",
+    "confidence": 0.99
+  },
+  "Screenshot from 2026-08-11 18-33-32.png": {
+    "group": "core-abs",
+    "exercise": "cable-crunch",
+    "new_path": "excercises_screenshots/core-abs/cable-crunch/cable-crunch-01.png",
+    "confidence": 0.99
+  },
   "Screenshot from 2026-07-30 11-11-50.png": {
     "group": "chest-tri",
     "exercise": "incline-dumbbell-press",

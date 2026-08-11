@@ -1,4 +1,4 @@
-const VERSION = "v14";
+const VERSION = "v15";
 const CACHE_PREFIX = "ds5-";
 const APP_CACHE = `${CACHE_PREFIX}workout-${VERSION}`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}runtime-${VERSION}`;
@@ -13,6 +13,7 @@ const APP_SHELL = [
   "./assets/ex/bench-press.webp",
   "./assets/ex/bird-dog.webp",
   "./assets/ex/cable-crossover.webp",
+  "./assets/ex/cable-crunch.webp",
   "./assets/ex/cable-flyes.webp",
   "./assets/ex/chest-supported-dumbbell-row.webp",
   "./assets/ex/close-grip-pulldown.webp",
@@ -28,6 +29,7 @@ const APP_SHELL = [
   "./assets/ex/lunges-walking.webp",
   "./assets/ex/machine-shoulder-press.webp",
   "./assets/ex/overhead-rope-extension.webp",
+  "./assets/ex/pallof-press.webp",
   "./assets/ex/plank.webp",
   "./assets/ex/reverse-pec-dec.webp",
   "./assets/ex/skierg.webp",
