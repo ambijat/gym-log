@@ -27,3 +27,6 @@ app-release-unsigned-aligned.apk
 # Local machine settings
 local.properties
 .vscode/
+
+# Session ledgers - local audit trail only, not published to the repo
+docs/SESSION_LEDGER_*.md

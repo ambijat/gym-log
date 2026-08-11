@@ -362,16 +362,31 @@ After installing the internal test build:
 
 ## 14. Current Release Snapshot
 
+Current release identity:
+
+```text
+versionName 2.1
+versionCode 13
+```
+
 Current release source commits:
 
 ```text
-latest release commit: Build release 1.8 package
-191336f Show completed exercise stars
-63a1de0 Record today's log date fix
-c6d4603 Fix local day rollover for logs
-f3670f7 Reconfirm shoulder exercises
-d53fadd Bump release version to 1.2
-56baef7 Mail export corrected
+latest release commit: Bump release version to 2.1
+81914d8 Bump release version to 2.1
+efc66ee Replace deprecated jcenter() with mavenCentral()
+5e6054b Prevent Android context menu over exercise image overlay
+657ac86 Add Pallof Press and Cable Crunch reference images
+93f6433 Replace dumbbell curl with chest-supported row
+```
+
+Signed with the upload keystore activated 2026-08-01 (see
+[RELEASE_2.0_AFTER_2026-08-01.md](RELEASE_2.0_AFTER_2026-08-01.md)), not the
+older `android.keystore`/`gymlogkey`:
+
+```text
+keystore: /home/ambijat/.android/ds5-upload-2026.p12
+alias:    ds5upload2026
 ```
 
 Current release artifact:
@@ -380,8 +395,14 @@ Current release artifact:
 app/build/outputs/bundle/release/app-release-signed.aab
 ```
 
-Current signed test APK:
+Signed bundle SHA-256:
 
 ```text
-app/build/outputs/apk/release/app-release-signed.apk
+a711703e93cdbe355b4c3845b2f8b777b05f3bc7a411beb1c3570d3d232133bc
 ```
+
+A full step-by-step, hash-verifiable trace of this release (audit → assets →
+fixes → build → sign → verify) was kept in `docs/SESSION_LEDGER_2026-08-11.md`
+during development. Session ledgers are local-only working notes
+(`docs/SESSION_LEDGER_*.md` is git-ignored) and are not part of the pushed
+repository.
