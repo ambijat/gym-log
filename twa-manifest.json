@@ -20,8 +20,8 @@
     "path": "/media/ambijat/FIGHTER/ANDROIDWORKS/gym-log/android.keystore",
     "alias": "gymlogkey"
   },
-  "appVersionName": "2.0",
-  "appVersionCode": 12,
+  "appVersionName": "2.1",
+  "appVersionCode": 13,
   "shortcuts": [
     {
       "name": "Log a workout",
@@ -71,5 +71,5 @@
     "window-controls-overlay",
     "standalone"
   ],
-  "appVersion": "2.0"
+  "appVersion": "2.1"
 }

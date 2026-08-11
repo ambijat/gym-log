@@ -57,8 +57,8 @@ android {
         applicationId "com.ambijat.gymlog"
         minSdkVersion 21
         targetSdkVersion 36
-        versionCode 12
-        versionName "2.0"
+        versionCode 13
+        versionName "2.1"
 
         // The name for the application
         resValue "string", "appName", twaManifest.name
